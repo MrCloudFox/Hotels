@@ -109,11 +109,18 @@ object SqliteDb extends DbInteractiveModule {
   }
 
   def getCheapestHotel(searchingParams: SearchingParams): ShortInfAboutHotels = {
-    ShortInfAboutHotels(Await.result(db.run(dbHotels.filter(_.cityId === searchingParams.cityId).filter(_.stars >= searchingParams.stars)
-      .filter(_.breakfast === searchingParams.breakfast)
-      .filter(_.seaNearby === searchingParams.seaNearby)
-      .filter(_.price === getAverageMinCosts(searchingParams.date, searchingParams.cityId, searchingParams.stars).min).result)
-      .map(_.map(ShortInfAboutHotel tupled _)), Duration.Inf))
+    if (searchingParams.seaNearby) {
+      // i know... i know ... just i can't use filter(hotel => (searchingParams.seaNearby == true && hotel.seaNearby === searchingParams.seaNearby)
+      // because filter worked with [T <: Rep[_]] instead with just a boolean (Rep it's column)
+      ShortInfAboutHotels(Await.result(db.run(dbHotels.filter(_.cityId === searchingParams.cityId).filter(_.stars >= searchingParams.stars)
+        .filter(_.breakfast === searchingParams.breakfast).filter(_.seaNearby === searchingParams.seaNearby)
+        .filter(_.price === getAverageMinCosts(searchingParams.date, searchingParams.cityId, searchingParams.stars).min).result)
+        .map(_.map(ShortInfAboutHotel tupled _)), Duration.Inf))
+    } else {
+      ShortInfAboutHotels(Await.result(db.run(dbHotels.filter(_.cityId === searchingParams.cityId).filter(_.stars >= searchingParams.stars)
+        .filter(_.breakfast === searchingParams.breakfast).filter(_.price === getAverageMinCosts(searchingParams.date, searchingParams.cityId, searchingParams.stars).min).result)
+        .map(_.map(ShortInfAboutHotel tupled _)), Duration.Inf))
+    }
   }
 
   def bookingHotel(bookingDetails: BookingDetails): BookingResult = {  //returned bookingId, status and fullPrice to buyout
