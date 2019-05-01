@@ -1,16 +1,11 @@
 lazy val akkaHttpVersion = "10.1.8"
 lazy val akkaVersion    = "2.5.21"
 
-
-version := "1.0"
-
-mainClass in Compile := Some("QuickstartServer")
-
 lazy val root = (project in file(".")).
   settings(
     inThisBuild(List(
       organization    := "com.example",
-      scalaVersion    := "2.12.7",
+      scalaVersion    := "2.12.7"
     )),
     name := "Hotels",
     resolvers += "typesafe" at "http://repo.typesafe.com/typesafe/releases/",
