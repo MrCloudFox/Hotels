@@ -123,7 +123,7 @@ object SqliteDb extends DbInteractiveModule {
         bookingDetails.dateArrive, bookingDetails.dateDeparture, bookingDetails.countOfPersons, fullPrice, "Booked")))
       , Duration.Inf)
 
-    BookingResult(Await.result(db.run(dbBooking.map(_.id).max.result), Duration.Inf), "Booked! Take your booking id", fullPrice)
+    BookingResult(Await.result(db.run(dbBooking.map(_.id).max.result), Duration.Inf))//, "Booked! Take your booking id", fullPrice)
   }
 
   def buyOut(buyoutDetails: BuyoutDetails): BuyoutResult = {
