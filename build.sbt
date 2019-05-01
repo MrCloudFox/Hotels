@@ -1,11 +1,15 @@
 lazy val akkaHttpVersion = "10.1.8"
 lazy val akkaVersion    = "2.5.21"
 
+enablePlugins(JavaAppPackaging)
+
 lazy val root = (project in file(".")).
   settings(
     inThisBuild(List(
       organization    := "com.example",
-      scalaVersion    := "2.12.7"
+      scalaVersion    := "2.12.7",
+      mainClass in Compile := Some("QuickstartServer"),
+      version := "1.0"
     )),
     name := "Hotels",
     resolvers += "typesafe" at "http://repo.typesafe.com/typesafe/releases/",
