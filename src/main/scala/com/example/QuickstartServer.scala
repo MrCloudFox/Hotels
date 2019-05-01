@@ -22,7 +22,7 @@ object QuickstartServer extends App with HotelsRoutes {
   val serverBinding: Future[Http.ServerBinding] = Http().bindAndHandle(routes, "0.0.0.0", port)
 
   SqliteDb
-  TestingData
+  //TestingData
 
   serverBinding.onComplete {
     case Success(bound) =>
