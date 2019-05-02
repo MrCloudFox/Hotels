@@ -104,10 +104,19 @@ object SqliteDb extends DbInteractiveModule {
     .filter(_.stars >= stars).result).map(_.map(ShortInfAboutHotel tupled _)), Duration.Inf))
 
   def getAverageMinCosts(searchingParams: SearchingParams): AverageMinCosts = {
-    AverageMinCosts(Await.result(db.run(dbHotels.filter(_.cityId === searchingParams.cityId).filter(_.stars >= searchingParams.stars)
-      .filter(_.breakfast === searchingParams.breakfast).filter(_.seaNearby === searchingParams.seaNearby).map(_.price).avg.result), Duration.Inf),
-      Await.result(db.run(dbHotels.filter(_.cityId === searchingParams.cityId).filter(_.stars >= searchingParams.stars).filter(_.breakfast === searchingParams.breakfast)
-        .filter(_.seaNearby === searchingParams.seaNearby).map(_.price).min.result), Duration.Inf))
+    if (searchingParams.seaNearby) {
+      AverageMinCosts(Await.result(db.run(dbHotels.filter(_.cityId === searchingParams.cityId).filter(_.stars >= searchingParams.stars)
+        .filter(_.breakfast === searchingParams.breakfast).filter(_.seaNearby === searchingParams.seaNearby).map(_.price).avg.result), Duration.Inf),
+        Await.result(db.run(dbHotels.filter(_.cityId === searchingParams.cityId).filter(_.stars >= searchingParams.stars).filter(_.breakfast === searchingParams.breakfast)
+          .filter(_.seaNearby === searchingParams.seaNearby).map(_.price).min.result), Duration.Inf))
+    } else {
+      AverageMinCosts(Await.result(db.run(dbHotels.filter(_.cityId === searchingParams.cityId).filter(_.stars >= searchingParams.stars)
+        .filter(_.breakfast === searchingParams.breakfast).map(_.price).avg.result), Duration.Inf),
+        Await.result(db.run(dbHotels.filter(_.cityId === searchingParams.cityId).filter(_.stars >= searchingParams.stars)
+          .filter(_.breakfast === searchingParams.breakfast)
+          .map(_.price).min.result), Duration.Inf))
+    }
+
   }
 
   def getCheapestHotel(searchingParams: SearchingParams): ShortInfAboutHotels = {
