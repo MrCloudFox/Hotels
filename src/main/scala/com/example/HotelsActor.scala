@@ -13,8 +13,8 @@ final case class ShortInfAboutHotels(shortInfAboutHotel: Seq[ShortInfAboutHotel]
 final case class AverageMinCosts(average: Option[Double], min: Option[Double])
 final case class BookingDetails(personId: Int, hotelId: Int, dateArrive: String, dateDeparture: String, countOfPersons: Int)
 //final case class BookingResult(id: Option[Int], status: String, fullPrice: Double)
-final case class BookingResult(bookingId: Option[Int])
-final case class BuyoutDetails(bookingId: Int)
+final case class BookingResult(BookingId: Option[Int])
+final case class BuyoutDetails(BookingId: Int)
 final case class BuyoutResult(status: String)
 //final case class BuyoutResult(status: Boolean)
 

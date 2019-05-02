@@ -127,8 +127,8 @@ trait HotelsRoutes extends JsonSupport {
               entity(as[BookingDetails]) { bookingDetails =>
                 val createdBooking: Future[BookingResult] = (hotelsActor ? BookingHotel(bookingDetails)).mapTo[BookingResult]
                 onSuccess(createdBooking) { createdBooking =>
-                  log.info("Booked [{}]: {}", createdBooking.bookingId)
-                  complete(createdBooking)  //return bookingId and status
+                  log.info("Booked [{}]: {}", createdBooking.BookingId)
+                  complete(createdBooking)  //return BookingId and status
                 }
               }
             }
