@@ -135,7 +135,7 @@ object SqliteDb extends DbInteractiveModule {
 
   def buyOut(buyoutDetails: BuyoutDetails): BuyoutResult = {
     Await.result(db.run(dbBooking.filter(_.id === buyoutDetails.BookingId).map(_.status).update("Buyouted")), Duration.Inf) //without check money
-    BuyoutResult("Buyouted")
+    BuyoutResult(true)
     //ByuoutResult(true)
   }
 

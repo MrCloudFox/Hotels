@@ -15,7 +15,7 @@ final case class BookingDetails(personId: Int, hotelId: Int, dateArrive: String,
 //final case class BookingResult(id: Option[Int], status: String, fullPrice: Double)
 final case class BookingResult(BookingId: Option[Int])
 final case class BuyoutDetails(BookingId: Int)
-final case class BuyoutResult(status: String)
+final case class BuyoutResult(status: Boolean)
 //final case class BuyoutResult(status: Boolean)
 
 object HotelsActor {
