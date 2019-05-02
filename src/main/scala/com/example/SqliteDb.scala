@@ -103,9 +103,11 @@ object SqliteDb extends DbInteractiveModule {
   def getAvailableHotels(date: String, cityId: Int, stars: Double): ShortInfAboutHotels = ShortInfAboutHotels(Await.result(db.run(dbHotels.filter(_.cityId === cityId)
     .filter(_.stars >= stars).result).map(_.map(ShortInfAboutHotel tupled _)), Duration.Inf))
 
-  def getAverageMinCosts(date: String, cityId: Int, stars: Double): AverageMinCosts = {
-    AverageMinCosts(Await.result(db.run(dbHotels.filter(_.cityId === cityId).filter(_.stars >= stars).map(_.price).avg.result), Duration.Inf),
-      Await.result(db.run(dbHotels.filter(_.cityId === cityId).filter(_.stars >= stars).map(_.price).min.result), Duration.Inf))
+  def getAverageMinCosts(searchingParams: SearchingParams): AverageMinCosts = {
+    AverageMinCosts(Await.result(db.run(dbHotels.filter(_.cityId === searchingParams.cityId).filter(_.stars >= searchingParams.stars)
+      .filter(_.breakfast === searchingParams.breakfast).filter(_.seaNearby === searchingParams.seaNearby).map(_.price).avg.result), Duration.Inf),
+      Await.result(db.run(dbHotels.filter(_.cityId === searchingParams.cityId).filter(_.stars >= searchingParams.stars).filter(_.breakfast === searchingParams.breakfast)
+        .filter(_.seaNearby === searchingParams.seaNearby).map(_.price).min.result), Duration.Inf))
   }
 
   def getCheapestHotel(searchingParams: SearchingParams): ShortInfAboutHotels = {
@@ -114,16 +116,17 @@ object SqliteDb extends DbInteractiveModule {
       // because filter worked with [T <: Rep[_]] instead with just a boolean (Rep it's column)
       ShortInfAboutHotels(Await.result(db.run(dbHotels.filter(_.cityId === searchingParams.cityId).filter(_.stars >= searchingParams.stars)
         .filter(_.breakfast === searchingParams.breakfast).filter(_.seaNearby === searchingParams.seaNearby)
-        .filter(_.price === getAverageMinCosts(searchingParams.date, searchingParams.cityId, searchingParams.stars).min).result)
+        .filter(_.price === getAverageMinCosts(searchingParams).min).result)
         .map(_.map(ShortInfAboutHotel tupled _)), Duration.Inf))
     } else {
       ShortInfAboutHotels(Await.result(db.run(dbHotels.filter(_.cityId === searchingParams.cityId).filter(_.stars >= searchingParams.stars)
-        .filter(_.breakfast === searchingParams.breakfast).filter(_.price === getAverageMinCosts(searchingParams.date, searchingParams.cityId, searchingParams.stars).min).result)
+        .filter(_.breakfast === searchingParams.breakfast)
+        .filter(_.price === getAverageMinCosts(searchingParams).min).result)
         .map(_.map(ShortInfAboutHotel tupled _)), Duration.Inf))
     }
   }
 
-  def bookingHotel(bookingDetails: BookingDetails): BookingResult = {  //returned BookingId, status and fullPrice to buyout
+  def bookingHotel(bookingDetails: BookingDetails): BookingResult = {  //returned bookingId, status and fullPrice to buyout
     val fullPrice = Await.result(db.run(dbHotels.filter(_.id === bookingDetails.hotelId).map(_.price).result.head), Duration.Inf) * bookingDetails.countOfPersons
     Await.result(db.run(DBIO.seq(dbBooking forceInsertExpr (
       Await.result(db.run(dbBooking.map(_.id).max.result), Duration.Inf).get + 1, bookingDetails.personId, bookingDetails.hotelId,

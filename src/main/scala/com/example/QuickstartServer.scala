@@ -18,8 +18,8 @@ object QuickstartServer extends App with HotelsRoutes {
 
   lazy val routes: Route = hotelsRoutes
 
-  val port: Int = sys.env.getOrElse("PORT", "8080").toInt
-  val serverBinding: Future[Http.ServerBinding] = Http().bindAndHandle(routes, "0.0.0.0", port)
+  //val port: Int = sys.env.getOrElse("PORT", "8080").toInt
+  val serverBinding: Future[Http.ServerBinding] = Http().bindAndHandle(routes, "127.0.0.1", 8080)
 
   SqliteDb
   //TestingData

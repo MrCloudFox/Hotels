@@ -86,24 +86,17 @@ trait HotelsRoutes extends JsonSupport {
             }
           )
         },
-        pathPrefix("avgmincosts") {       //GET /hotels/avgmincosts/{day}/{cityId}/{stars}
+        path("avgmincosts") {      //POST /hotels/avgmincosts
           concat(
-            pathPrefix(Segment) { day =>
-              concat(
-                pathPrefix(Segment) { cityId =>
-                  concat(
-                    path(Segment) { stars =>
-                      concat(
-                        get {
-                          val avgCost: Future[AverageMinCosts] =
-                            (hotelsActor ? GetAverageMinCosts(day, cityId.toInt, stars.toDouble)).mapTo[AverageMinCosts]
-                          complete(avgCost)
-                        }
-                      )
-                    }
-                  )
+            post {
+              entity(as[SearchingParams]) { searchingParams =>
+                val cheapestHotels: Future[ShortInfAboutHotels] =
+                  (hotelsActor ? GetAverageMinCosts(searchingParams))
+                    .mapTo[ShortInfAboutHotels]
+                onSuccess(cheapestHotels) { cheapestHotels =>
+                  complete(cheapestHotels)
                 }
-              )
+              }
             }
           )
         },
