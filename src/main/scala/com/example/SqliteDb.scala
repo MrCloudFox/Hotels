@@ -123,7 +123,7 @@ object SqliteDb extends DbInteractiveModule {
     }
   }
 
-  def bookingHotel(bookingDetails: BookingDetails): BookingResult = {  //returned bookingId, status and fullPrice to buyout
+  def bookingHotel(bookingDetails: BookingDetails): BookingResult = {  //returned BookingId, status and fullPrice to buyout
     val fullPrice = Await.result(db.run(dbHotels.filter(_.id === bookingDetails.hotelId).map(_.price).result.head), Duration.Inf) * bookingDetails.countOfPersons
     Await.result(db.run(DBIO.seq(dbBooking forceInsertExpr (
       Await.result(db.run(dbBooking.map(_.id).max.result), Duration.Inf).get + 1, bookingDetails.personId, bookingDetails.hotelId,
@@ -134,7 +134,7 @@ object SqliteDb extends DbInteractiveModule {
   }
 
   def buyOut(buyoutDetails: BuyoutDetails): BuyoutResult = {
-    Await.result(db.run(dbBooking.filter(_.id === buyoutDetails.bookingId).map(_.status).update("Buyouted")), Duration.Inf) //without check money
+    Await.result(db.run(dbBooking.filter(_.id === buyoutDetails.BookingId).map(_.status).update("Buyouted")), Duration.Inf) //without check money
     BuyoutResult("Buyouted")
     //ByuoutResult(true)
   }
